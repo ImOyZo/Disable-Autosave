@@ -58,7 +58,7 @@ ShowStatus(line1, line2, color2, line3) {
     Gui, StatusGui:Font, c%color2% Bold
     Gui, StatusGui:Add, Text, , %line2%
     Gui, StatusGui:Font, c000000 Norm
-    Gui, StatusGui:Add, Text, , %line3%
+    Gui, StatusGui:Add, Text, c%color2% , %line3%
     Gui, StatusGui:Show, x10 y10 NoActivate, Status
 }
 
