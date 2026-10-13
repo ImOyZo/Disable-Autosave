@@ -25,40 +25,45 @@ if not A_IsAdmin
 
 OnExit("AppExit")
 
-;CTRL+F9 to toggle the firewall rule
+ShowStatus("No active Firewall", "Autosave Enabled", "FF5555", "Don't Ngentot")
+
 <^f9::
-	; Check if firewall rule already exists
     if (fw_name != "") {
-        ToolTip, Firewall rule %fw_name% is already active!, 10, 10
-        Sleep 3000
-		ToolTip, Active Firewall: %fw_name% `nAutosave Disabled `nGo Ngentot, 10, 10
+        ShowStatus("Firewall rule " fw_name " is already active!", "Autosave Disabled", "33FF33", "Go Ngentot")
         return  ; Exit hotkey if rule exists
     }
-	;Generate Random Firewall Rule Name
+
 	Random fw_name, 10000000, 99999999
-	; Create a new firewall rule with the generated name
 	RunWait netsh advfirewall firewall add rule name="%fw_name%" dir=out action=block remoteip="%ip_addr%" ,,hide
-	ToolTip, Active Firewall: %fw_name% `nAutosave Disabled `nGo Ngentot, 10, 10
+	ShowStatus("Active Firewall: " fw_name, "Autosave Disabled", "33FF33", "Go Ngentot")
 return
 
-; CTRL+F12 to delete the firewall rule
 <^f12::
-	; Check if a firewall rule already exists
     if (fw_name = "") {
-        ToolTip, No active Firewall to be disabled, 10, 10
-		Sleep, 3000
-		ToolTip, No active Firewall `nAutosave Enabled `nDon't Ngentot, 10, 10
+        ShowStatus("No active Firewall to be disabled", "Autosave Enabled", "FF5555", "Don't Ngentot")
         return
     }
-	; Delete the existing firewall rule
 	RunWait netsh advfirewall firewall delete rule name="%fw_name%" ,,hide
-	fw_name := ""  ; Clear the global variable
-	ToolTip, No active Firewall `nAutosave Enabled `nDon't Ngentot, 10, 10
+	fw_name := ""
+	ShowStatus("No active Firewall", "Autosave Enabled", "FF5555", "Don't Ngentot")
 return
 
-; Function to clean up on exit
+ShowStatus(line1, line2, color2, line3) {
+    Gui, StatusGui:Destroy
+    Gui, StatusGui:New, -Caption +AlwaysOnTop +ToolWindow +LastFound +E0x08000000
+    Gui, StatusGui:Color, FFFFFF
+    Gui, StatusGui:Margin, 12, 8
+    Gui, StatusGui:Font, c000000, Segoe UI
+    Gui, StatusGui:Add, Text, , %line1%
+    Gui, StatusGui:Font, c%color2% Bold
+    Gui, StatusGui:Add, Text, , %line2%
+    Gui, StatusGui:Font, c000000 Norm
+    Gui, StatusGui:Add, Text, , %line3%
+    Gui, StatusGui:Show, x10 y10 NoActivate, Status
+}
+
 AppExit()
 {
 	RunWait netsh advfirewall firewall delete rule name="%fw_name%" ,,hide
-	fw_name := ""  ; Clear the global variable
+	fw_name := ""
 }
